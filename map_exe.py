@@ -29,7 +29,8 @@ adress_global=[
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/testdc.py", 
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/перевірка коду.txt", 
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/data/setting.txt", 
-	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/data/data/command.txt"
+	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/data/data/command.txt",
+	"https://raw.githubusercontent.com/BOTX2000/map/main/map_exe.py" #посилання на інсталювання оновлення
 	]
 def a():
 	global adress_global
@@ -95,6 +96,14 @@ class vois_addon:
 		command.install("vois-addon/data/data")
 		setting.install("vois-addon/data")
 		os.makedirs("downloads/vois-addon/data/cache", exist_ok=True)
+		
+class apdate:
+	def install():
+		with open("map_exe.py", "w") as f:
+			response = requests.get(adress_global[11])
+			if response.status_code == 200:
+				f.write(response.content)
+		
 
 def argsin():
 	args=input().split()
