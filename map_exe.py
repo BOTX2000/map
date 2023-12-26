@@ -1,5 +1,7 @@
 import os
 import requests
+import zipfile
+import threading
 
 class my_opinion_exemplar_1:
 	def __init__(self, url, path=""):
@@ -19,18 +21,20 @@ class my_opinion_exemplar_1:
 
 				
 adress_global=[
-	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/start.py",
-	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/ex1.py",
+	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/start.py",#0
+	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/ex1.py",#1
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/base.py", 
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/dc.py", 
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/file_os.py", 
-	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/node.py", 
+	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/node.py", #5
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/start.spec", 
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/testdc.py", 
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/перевірка коду.txt", 
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/data/setting.txt", 
-	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/data/data/command.txt",
-	"https://raw.githubusercontent.com/BOTX2000/map/main/map_exe.py" #посилання на інсталювання оновлення
+	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/data/data/command.txt",#10
+	"https://raw.githubusercontent.com/BOTX2000/map/main/map_exe.py", #посилання на інсталювання оновлення
+	"https://alphacephei.com/vosk/models/vosk-model-en-us-daanzu-20200905-lgraph.zip",
+	"https://drive.google.com/uc?id=1EFw5vpWO1Nz-J9kMi7bv8fpKd34_5_eZ&export=download"
 	]
 def a():
 	global adress_global
@@ -79,25 +83,39 @@ class setting(my_opinion_exemplar_1):
 class command(my_opinion_exemplar_1):
 	def __init__(self):
 		super().__init__(adress_global[10])
-"""
-class (my_opinion_exemplar_1):
-	def __init__(self):
-		super().__init__("")
 		
-class (my_opinion_exemplar_1):
+class vosk_model_en(my_opinion_exemplar_1):
 	def __init__(self):
-		super().__init__("")
-"""
+		super().__init__(adress_global[12], "vois-addon/data/data")
+		
+class unzip:
+	def process(zip_name, extract=None):
+		 if extract==None: extract=zip_name
+		 with zipfile.ZipFile(zip_name, 'r') as zipf:
+			 zipf.extractall(extract)
+			 
+class test:
+	def install():
+		pass
+
+def process1():
+	vosk_model_en.install("vois-addon/data/data")
+	unzip.process("downloads/vois-addon/data/data/vosk-model-en-us-daanzu-20200905-lgraph.zip", "downloads/vois-addon/data/data")
+	os.remove("downloads/vois-addon/data/data/vosk-model-en-us-daanzu-20200905-lgraph.zip")
+
 class vois_addon:
 	def install(self):
+		t=threading.Thread(target=process1).start()
 		name=["start", "ex1", "base", "dc", "file_os", "node", "start_spec", "testdc", "перевірка"]
 		for i in name:
 			eval(f"{i}.install('vois-addon')")
 		command.install("vois-addon/data/data")
 		setting.install("vois-addon/data")
 		os.makedirs("downloads/vois-addon/data/cache", exist_ok=True)
+		t.join()
 		
-class apdate:
+		
+class update:
 	def install():
 		with open("map_exe.py", "w") as f:
 			response = requests.get(adress_global[11])
@@ -109,7 +127,7 @@ def argsin():
 	args=input().split()
 	return args
 	
-clas=["start", "ex1", "base", "dc", "file_os", "node", "start_spec", "testdc", "перевірка", "vois_addon", "setting", "command"]
+clas=["start", "ex1", "base", "dc", "file_os", "node", "start_spec", "testdc", "перевірка", "vois_addon", "setting", "command", "vosk_model_en", "update"]
 for i in clas:
 	globals()[i.lower()] = globals()[i]()
 
