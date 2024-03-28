@@ -3,6 +3,7 @@ import requests
 import zipfile
 import threading
 from time import sleep
+from bs4 import BeautifulSoup
 
 class my_opinion_exemplar_1:
 	def __init__(self, url, path=""):
@@ -20,13 +21,47 @@ class my_opinion_exemplar_1:
 			if response.status_code == 200:
 				f.write(response.content)
 	
+
+
 	def alt_instal(self, name, path=""):
-		if path!="": self.path=path
+		if path != "":
+			self.path = path
 		os.makedirs("downloads/" + self.path, exist_ok=True)
-		with open("downloads/" + self.path + "/" + name, "wb") as f:
-			response = requests.get(self.url)
-			if response.status_code == 200:
+    
+		# Відправляємо початковий запит
+		response = requests.get(self.url)
+		if response.status_code == 200:
+			# Перевірка наявності попередження про вірус
+			if "Google Drive - Virus scan warning" in response.text:
+				print("Warning: This file may contain viruses.")
+				# Тут ви можете запросити користувача про продовження завантаження або ні
+				# Наприклад, використовуючи input()
+				user_input = input("Do you want to continue downloading? (yes/no): ")
+				if user_input.lower() != 'yes':
+					print("Download canceled.")
+					return
+				else:
+					# Повторно відправляємо запит з підтвердженням завантаження
+					soup = BeautifulSoup(response.text, 'html.parser')
+					confirm_input = soup.find('input', {'name': 'confirm'})
+					if confirm_input:
+						confirm_value = confirm_input.get('value')
+						if confirm_value:
+							download_url = f"{self.url}&confirm={confirm_value}"
+							response = requests.get(download_url)
+						else:
+							print("Confirmation value not found.")
+							return
+					else:
+						print("Confirmation input not found.")
+						return
+        
+			# Якщо попередження вірусів відсутнє або користувач погодився продовжити завантаження
+			with open("downloads/" + self.path + "/" + name, "wb") as f:
 				f.write(response.content)
+				print("Download completed successfully.")
+		else:
+			print("Error:", response.status_code)
 
 				
 adress_global=[
@@ -142,6 +177,26 @@ class tort_interactive_map():
 		sleep(1)
 		unzip.process("exe.zip", "")
 		
+def download_file_from_google_drive(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        download_link = soup.find('input', {'id': 'uc-download-link'}).get('value')
+        if download_link:
+            file_response = requests.get(download_link)
+            if file_response.status_code == 200:
+                with open('downloaded_file.zip', 'wb') as f:
+                    f.write(file_response.content)
+                print("File downloaded successfully.")
+            else:
+                print("Failed to download file.")
+        else:
+            print("Download link not found in the HTML content.")
+    else:
+        print("Failed to fetch HTML content.")
+
+url = "https://drive.google.com/uc?id=1w-JT9BKzTdtQ_Y1SEmibZs7Ng__pGBjK&export=download"
+download_file_from_google_drive(url)
 
 def argsin():
 	args=input().split()
