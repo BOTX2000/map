@@ -2,6 +2,7 @@ import os
 import requests
 import zipfile
 import threading
+from time import sleep
 
 class my_opinion_exemplar_1:
 	def __init__(self, url, path=""):
@@ -15,6 +16,14 @@ class my_opinion_exemplar_1:
 		if path!="": self.path=path
 		os.makedirs("downloads/" + self.path, exist_ok=True)
 		with open("downloads/" + self.path + "/" + self.name, "wb") as f:
+			response = requests.get(self.url)
+			if response.status_code == 200:
+				f.write(response.content)
+	
+	def alt_instal(self, name, path=""):
+		if path!="": self.path=path
+		os.makedirs("downloads/" + self.path, exist_ok=True)
+		with open("downloads/" + self.path + "/" + name, "wb") as f:
 			response = requests.get(self.url)
 			if response.status_code == 200:
 				f.write(response.content)
@@ -34,7 +43,8 @@ adress_global=[
 	"https://raw.githubusercontent.com/BOTX2000/vois_addon/main/vois-addon/data/data/command.txt",#10
 	"https://raw.githubusercontent.com/BOTX2000/map/main/map_exe.py", #посилання на інсталювання оновлення
 	"https://alphacephei.com/vosk/models/vosk-model-en-us-daanzu-20200905-lgraph.zip",
-	"https://drive.google.com/uc?id=1EFw5vpWO1Nz-J9kMi7bv8fpKd34_5_eZ&export=download"
+	"https://drive.google.com/uc?id=1EFw5vpWO1Nz-J9kMi7bv8fpKd34_5_eZ&export=download", 
+	"https://drive.google.com/uc?id=1w-JT9BKzTdtQ_Y1SEmibZs7Ng__pGBjK&export=download"
 	]
 def a():
 	global adress_global
@@ -121,13 +131,24 @@ class update:
 			response = requests.get(adress_global[11])
 			if response.status_code == 200:
 				f.write(response.content)
+				
+class int_map(my_opinion_exemplar_1):
+	def __init__(self):
+		super().__init__(adress_global[13])
+				
+class tort_interactive_map():
+	def install():
+		int_map.alt_instal("exe.zip")
+		sleep(1)
+		unzip.process("exe.zip", "")
 		
 
 def argsin():
 	args=input().split()
 	return args
 	
-clas=["start", "ex1", "base", "dc", "file_os", "node", "start_spec", "testdc", "перевірка", "vois_addon", "setting", "command", "vosk_model_en", "update"]
+clas=["start", "ex1", "base", "dc", "file_os", "node", "start_spec", "testdc", "перевірка", "vois_addon", "setting", "command", "vosk_model_en", "update",
+	  "int_map"]
 for i in clas:
 	globals()[i.lower()] = globals()[i]()
 
